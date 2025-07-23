@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Feud - Control Panel</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .controls-section {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+        
+        .answers-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1e3c72;
+        }
+        
+        .answer-control {
+            display: grid;
+            grid-template-columns: 40px 1fr 100px 60px;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .answer-control:hover {
+            border-color: #2a5298;
+            box-shadow: 0 2px 8px rgba(42, 82, 152, 0.1);
+        }
+        
+        .answer-control.revealed {
+            border-color: #28a745;
+            background: #f8fff8;
+        }
+        
+        .answer-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2a5298;
+            text-align: center;
+        }
+        
+        .answer-input {
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .answer-input:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        
+        .points-input {
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .points-input:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+        }
+        
+        .reveal-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .score-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .total-score {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #2a5298;
+            margin: 10px 0;
+        }
+        
+        .display-controls {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+        }
+        
+        .control-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: #333;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .answer-control {
+                grid-template-columns: 30px 1fr 80px 50px;
+                gap: 10px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Control Panel</h1>
+            <p class="subtitle">Family Feud Fast Money</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="controls-section">
+                <div class="answers-panel">
+                    <h2 class="panel-title">Answers & Points</h2>
+                    
+                    <div class="answer-control" id="control-1">
+                        <div class="answer-number">1</div>
+                        <input type="text" class="answer-input" id="answer-1" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-1" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-1">
+                    </div>
+                    
+                    <div class="answer-control" id="control-2">
+                        <div class="answer-number">2</div>
+                        <input type="text" class="answer-input" id="answer-2" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-2" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-2">
+                    </div>
+                    
+                    <div class="answer-control" id="control-3">
+                        <div class="answer-number">3</div>
+                        <input type="text" class="answer-input" id="answer-3" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-3" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-3">
+                    </div>
+                    
+                    <div class="answer-control" id="control-4">
+                        <div class="answer-number">4</div>
+                        <input type="text" class="answer-input" id="answer-4" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-4" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-4">
+                    </div>
+                    
+                    <div class="answer-control" id="control-5">
+                        <div class="answer-number">5</div>
+                        <input type="text" class="answer-input" id="answer-5" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-5" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-5">
+                    </div>
+                    
+                    <div class="answer-control" id="control-6">
+                        <div class="answer-number">6</div>
+                        <input type="text" class="answer-input" id="answer-6" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-6" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-6">
+                    </div>
+                    
+                    <div class="answer-control" id="control-7">
+                        <div class="answer-number">7</div>
+                        <input type="text" class="answer-input" id="answer-7" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-7" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-7">
+                    </div>
+                    
+                    <div class="answer-control" id="control-8">
+                        <div class="answer-number">8</div>
+                        <input type="text" class="answer-input" id="answer-8" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-8" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-8">
+                    </div>
+                    
+                    <div class="answer-control" id="control-9">
+                        <div class="answer-number">9</div>
+                        <input type="text" class="answer-input" id="answer-9" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-9" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-9">
+                    </div>
+                    
+                    <div class="answer-control" id="control-10">
+                        <div class="answer-number">10</div>
+                        <input type="text" class="answer-input" id="answer-10" placeholder="Enter answer..." maxlength="25">
+                        <input type="number" class="points-input" id="points-10" placeholder="Points" min="0" max="999">
+                        <input type="checkbox" class="reveal-checkbox" id="reveal-10">
+                    </div>
+                </div>
+                
+                <div class="side-panel">
+                    <div class="score-panel">
+                        <h3 class="panel-title">Total Score</h3>
+                        <div class="total-score" id="total-score">0</div>
+                    </div>
+                    
+                    <div class="display-controls">
+                        <h3 class="panel-title">Display Control</h3>
+                        
+                        <div class="status disconnected" id="connection-status">
+                            Display Disconnected
+                        </div>
+                        
+                        <button class="control-btn btn-primary" id="open-display">
+                            Open Display Window
+                        </button>
+                        
+                        <div class="quick-actions">
+                            <button class="control-btn btn-success" id="reveal-all">
+                                Reveal All
+                            </button>
+                            
+                            <button class="control-btn btn-warning" id="hide-all">
+                                Hide All
+                            </button>
+                            
+                            <button class="control-btn btn-danger" id="reset-all">
+                                Reset All
+                            </button>
+                            
+                            <button class="control-btn btn-primary" id="update-score">
+                                Update Score
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let displayWindow = null;
+        let isConnected = false;
+
+        // DOM Elements
+        const connectionStatus = document.getElementById('connection-status');
+        const totalScoreElement = document.getElementById('total-score');
+        const openDisplayBtn = document.getElementById('open-display');
+        const revealAllBtn = document.getElementById('reveal-all');
+        const hideAllBtn = document.getElementById('hide-all');
+        const resetAllBtn = document.getElementById('reset-all');
+        const updateScoreBtn = document.getElementById('update-score');
+
+        // Initialize event listeners
+        function initializeEventListeners() {
+            // Open display window
+            openDisplayBtn.addEventListener('click', openDisplayWindow);
+            
+            // Quick action buttons
+            revealAllBtn.addEventListener('click', revealAllAnswers);
+            hideAllBtn.addEventListener('click', hideAllAnswers);
+            resetAllBtn.addEventListener('click', resetAllAnswers);
+            updateScoreBtn.addEventListener('click', calculateAndUpdateScore);
+            
+            // Add event listeners for each answer control
+            for (let i = 1; i <= 10; i++) {
+                const answerInput = document.getElementById(`answer-${i}`);
+                const pointsInput = document.getElementById(`points-${i}`);
+                const revealCheckbox = document.getElementById(`reveal-${i}`);
+                const controlElement = document.getElementById(`control-${i}`);
+                
+                answerInput.addEventListener('input', () => updateAnswer(i));
+                pointsInput.addEventListener('input', () => updateAnswer(i));
+                revealCheckbox.addEventListener('change', (e) => {
+                    controlElement.classList.toggle('revealed', e.target.checked);
+                    updateAnswer(i);
+                    calculateAndUpdateScore();
+                });
+            }
+        }
+
+        function openDisplayWindow() {
+            if (displayWindow && !displayWindow.closed) {
+                displayWindow.focus();
+                return;
+            }
+            
+            displayWindow = window.open('display.html', 'FamilyFeudDisplay', 
+                'width=1200,height=800,menubar=no,toolbar=no,location=no,status=no,scrollbars=no');
+            
+            if (displayWindow) {
+                updateConnectionStatus(true);
+                
+                // Send all current data to display window after it loads
+                setTimeout(() => {
+                    sendAllAnswersToDisplay();
+                    calculateAndUpdateScore();
+                }, 1000);
+                
+                // Check if window is closed
+                const checkClosed = setInterval(() => {
+                    if (displayWindow.closed) {
+                        updateConnectionStatus(false);
+                        clearInterval(checkClosed);
+                    }
+                }, 1000);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            isConnected = connected;
+            if (connected) {
+                connectionStatus.textContent = 'Display Connected';
+                connectionStatus.className = 'status connected';
+            } else {
+                connectionStatus.textContent = 'Display Disconnected';
+                connectionStatus.className = 'status disconnected';
+            }
+        }
+
+        function updateAnswer(index) {
+            const answerInput = document.getElementById(`answer-${index}`);
+            const pointsInput = document.getElementById(`points-${index}`);
+            const revealCheckbox = document.getElementById(`reveal-${index}`);
+            
+            const answerData = {
+                type: 'updateAnswer',
+                index: index,
+                text: answerInput.value,
+                points: pointsInput.value || '0',
+                revealed: revealCheckbox.checked
+            };
+            
+            sendToDisplay(answerData);
+        }
+
+        function sendToDisplay(data) {
+            if (displayWindow && !displayWindow.closed) {
+                displayWindow.postMessage(data, '*');
+            }
+        }
+
+        function sendAllAnswersToDisplay() {
+            for (let i = 1; i <= 10; i++) {
+                updateAnswer(i);
+            }
+        }
+
+        function calculateAndUpdateScore() {
+            let total = 0;
+            for (let i = 1; i <= 10; i++) {
+                const pointsInput = document.getElementById(`points-${i}`);
+                const revealCheckbox = document.getElementById(`reveal-${i}`);
+                
+                if (revealCheckbox.checked && pointsInput.value) {
+                    total += parseInt(pointsInput.value) || 0;
+                }
+            }
+            
+            totalScoreElement.textContent = total;
+            sendToDisplay({
+                type: 'updateScore',
+                score: total
+            });
+        }
+
+        function revealAllAnswers() {
+            for (let i = 1; i <= 10; i++) {
+                const revealCheckbox = document.getElementById(`reveal-${i}`);
+                const controlElement = document.getElementById(`control-${i}`);
+                
+                revealCheckbox.checked = true;
+                controlElement.classList.add('revealed');
+                updateAnswer(i);
+            }
+            calculateAndUpdateScore();
+        }
+
+        function hideAllAnswers() {
+            for (let i = 1; i <= 10; i++) {
+                const revealCheckbox = document.getElementById(`reveal-${i}`);
+                const controlElement = document.getElementById(`control-${i}`);
+                
+                revealCheckbox.checked = false;
+                controlElement.classList.remove('revealed');
+                updateAnswer(i);
+            }
+            calculateAndUpdateScore();
+        }
+
+        function resetAllAnswers() {
+            if (confirm('Are you sure you want to reset all answers and points?')) {
+                for (let i = 1; i <= 10; i++) {
+                    const answerInput = document.getElementById(`answer-${i}`);
+                    const pointsInput = document.getElementById(`points-${i}`);
+                    const revealCheckbox = document.getElementById(`reveal-${i}`);
+                    const controlElement = document.getElementById(`control-${i}`);
+                    
+                    answerInput.value = '';
+                    pointsInput.value = '';
+                    revealCheckbox.checked = false;
+                    controlElement.classList.remove('revealed');
+                    updateAnswer(i);
+                }
+                calculateAndUpdateScore();
+            }
+        }
+
+        // Listen for messages from display window
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'displayReady') {
+                updateConnectionStatus(true);
+                sendAllAnswersToDisplay();
+                calculateAndUpdateScore();
+            }
+        });
+
+        // Initialize the control panel
+        initializeEventListeners();
+    </script>
+</body>
+</html> 

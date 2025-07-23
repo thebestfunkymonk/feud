@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Feud - Fast Money Display</title>
+    <style>
+
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Helvetica Condensed', 'Arial Narrow', sans-serif;
+            background: url('feud template.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .game-board {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 20px;
+        }
+        
+        .header {
+            display: none;
+        }
+        
+        .answers-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+
+        
+        .answer-row {
+            display: none;
+        }
+        
+        .draggable-text, .draggable-points {
+            position: absolute;
+            cursor: move;
+            pointer-events: all;
+            user-select: none;
+        }
+        
+
+        
+        .draggable-text {
+            font-size: 2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: white;
+            transition: opacity 0.5s ease;
+        }
+        
+        .draggable-points {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+            transition: opacity 0.5s ease 0.2s;
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .score-section {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: move;
+            user-select: none;
+        }
+        
+        .total-score {
+            background: none;
+            padding: 0;
+            border: none;
+        }
+        
+        .score-text {
+            font-family: 'Helvetica Condensed', 'Arial Narrow', sans-serif;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: white;
+            text-align: center;
+            display: block;
+            min-width: 200px;
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div class="game-board">
+
+        
+        <div class="answers-container">
+            <!-- Answer 1 -->
+            <div class="draggable-text" id="text-1" style="top: 100px; left: 100px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-1" style="top: 100px; left: 400px; opacity: 0;"></div>
+            
+            <!-- Answer 2 -->
+            <div class="draggable-text" id="text-2" style="top: 150px; left: 100px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-2" style="top: 150px; left: 400px; opacity: 0;"></div>
+            
+            <!-- Answer 3 -->
+            <div class="draggable-text" id="text-3" style="top: 200px; left: 100px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-3" style="top: 200px; left: 400px; opacity: 0;"></div>
+            
+            <!-- Answer 4 -->
+            <div class="draggable-text" id="text-4" style="top: 250px; left: 100px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-4" style="top: 250px; left: 400px; opacity: 0;"></div>
+            
+            <!-- Answer 5 -->
+            <div class="draggable-text" id="text-5" style="top: 300px; left: 100px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-5" style="top: 300px; left: 400px; opacity: 0;"></div>
+            
+            <!-- Answer 6 -->
+            <div class="draggable-text" id="text-6" style="top: 100px; left: 600px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-6" style="top: 100px; left: 900px; opacity: 0;"></div>
+            
+            <!-- Answer 7 -->
+            <div class="draggable-text" id="text-7" style="top: 150px; left: 600px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-7" style="top: 150px; left: 900px; opacity: 0;"></div>
+            
+            <!-- Answer 8 -->
+            <div class="draggable-text" id="text-8" style="top: 200px; left: 600px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-8" style="top: 200px; left: 900px; opacity: 0;"></div>
+            
+            <!-- Answer 9 -->
+            <div class="draggable-text" id="text-9" style="top: 250px; left: 600px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-9" style="top: 250px; left: 900px; opacity: 0;"></div>
+            
+            <!-- Answer 10 -->
+            <div class="draggable-text" id="text-10" style="top: 300px; left: 600px; opacity: 0;"></div>
+            <div class="draggable-points" id="points-10" style="top: 300px; left: 900px; opacity: 0;"></div>
+        </div>
+        
+        <div class="score-section">
+            <div class="total-score">
+                <span class="score-text">TOTAL POINTS: <span id="total-score">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Listen for messages from the control page
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'updateAnswer') {
+                const { index, text, points, revealed } = event.data;
+                updateAnswer(index, text, points, revealed);
+            } else if (event.data.type === 'updateScore') {
+                updateTotalScore(event.data.score);
+            }
+        });
+
+        function updateAnswer(index, text, points, revealed) {
+            const textElement = document.getElementById(`text-${index}`);
+            const pointsElement = document.getElementById(`points-${index}`);
+
+            textElement.textContent = text;
+            pointsElement.textContent = points;
+
+            if (revealed) {
+                textElement.style.opacity = '1';
+                pointsElement.style.opacity = '1';
+            } else {
+                textElement.style.opacity = '0';
+                pointsElement.style.opacity = '0';
+            }
+        }
+
+        function updateTotalScore(score) {
+            const scoreElement = document.getElementById('total-score');
+            scoreElement.textContent = score;
+        }
+
+        // Check if control page is open in another window
+        function checkForControlPage() {
+            const opener = window.opener;
+            if (opener && !opener.closed) {
+                // Send ready message to control page
+                opener.postMessage({type: 'displayReady'}, '*');
+            }
+        }
+
+        // Check for control page connection
+        setTimeout(checkForControlPage, 500);
+        
+        // Initialize all 10 answers as hidden
+        for (let i = 1; i <= 10; i++) {
+            updateAnswer(i, '', '0', false);
+        }
+        
+        // Make elements draggable
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+            
+            element.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                const rect = element.getBoundingClientRect();
+                initialLeft = rect.left;
+                initialTop = rect.top;
+                
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+                e.preventDefault();
+            });
+            
+            function onMouseMove(e) {
+                if (!isDragging) return;
+                
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                
+                element.style.left = (initialLeft + deltaX) + 'px';
+                element.style.top = (initialTop + deltaY) + 'px';
+            }
+            
+            function onMouseUp() {
+                isDragging = false;
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            }
+        }
+        
+        // Make all text and points elements draggable
+        for (let i = 1; i <= 10; i++) {
+            const textElement = document.getElementById(`text-${i}`);
+            const pointsElement = document.getElementById(`points-${i}`);
+            makeDraggable(textElement);
+            makeDraggable(pointsElement);
+        }
+        
+        // Make score section draggable
+        const scoreSection = document.querySelector('.score-section');
+        makeDraggable(scoreSection);
+    </script>
+</body>
+</html> 
